@@ -2,9 +2,7 @@ const {validationResult} = require('express-validator')
 const Blogpost = require('../models/blog')
 
 exports.createBlogPost = (req,res,next) => {
-    const title = req.body.title
-    // const image = req.body.image
-    const body = req.body.body
+
 
     const errors = validationResult(req)
 
@@ -15,9 +13,20 @@ exports.createBlogPost = (req,res,next) => {
         throw err;
     }
 
+    if(!req.file){
+        const err = new Error('Image harus Diupload')
+        err.errorStatus = 422
+        throw err;
+    }
+
+    const title = req.body.title
+    const image = req.file.path
+    const body = req.body.body
+
     const Posting = new Blogpost({
         title: title,
         body : body,
+        image : image,
         author : {
             uid: 1,
             nama:'Gangs',

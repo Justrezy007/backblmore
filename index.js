@@ -1,12 +1,40 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
+const multer = require('multer')
 const app = express()
 const router = express.Router()
+
+// Deklarasi File Storage Multer
+const fileStorage  = multer.diskStorage({
+    destination: (req,file,cb)=>{
+        cb(null, 'image')
+    },
+    filename: (req,file,cb) =>{
+        cb(null,new Date().getTime() + '-' + file.originalname )
+    }
+})
+
+// Menggunakan Filter Multer
+const fileFilter = (req,file,cb)=>{
+    if(file.mimetype === 'image/png' || file.mimetype ===  'image/jpg' ||  file.mimetype ===  'image/jpeg') {
+        cb(null, true)
+    }
+    else{
+        cb(null,false)
+    }
+}
+
+
 
 // Menggunakan middleware Body Parser
 
 app.use(bodyParser.json())
+
+// Menggunakan middleware
+
+app.use(multer({storage: fileStorage, fileFilter: fileFilter }).single('image'))
+
 
 // Mengatasi CROSS ORIGIN pada web engine
 
