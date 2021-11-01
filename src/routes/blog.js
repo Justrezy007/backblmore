@@ -14,7 +14,7 @@ router.post(
   blogController.createBlogPost
 );
 
-//  [GET] get all post
+//  [GET] get all post /blog/post?page=[int]&perpage=[int]
 router.get('/posts', blogController.getAllPosts)
 
 // [GET] get post by id

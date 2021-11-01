@@ -49,16 +49,31 @@ exports.createBlogPost = (req,res,next) => {
     
 }
 
-// [GET] Get All Post /posts
+// [GET] Get All Post /posts?page=[int]&perpage=[int]
 exports.getAllPosts = (req,res,next)=>{
+    const currentPage = req.query.page || 1
+    const perpage =  req.query.perpage || 5
+    let totalPost;
+
     Blogpost.find()
+    .countDocuments()
+    .then(count=>{
+        totalPost = count
+        return Blogpost.find()
+        .skip((parseInt(currentPage)-1)*parseInt(perpage))
+        .limit(parseInt(perpage))
+    })
     .then(result=>{
         res.status(200).json({
             message: 'Berhasil mendapatkan Semua Post',
-            data: result
+            data: result,
+            total_post : totalPost,
+            current_page : parseInt(currentPage),
+            per_page: parseInt(perpage)
         })
     })
     .catch(err => next(err))
+    
 }
 
 // [GET] Get Post By Id /posts/:postId
@@ -163,6 +178,7 @@ const deleteImage = (filepath)=>{
 
     // Mendapatkan path dari gambar dengan menggabungkan path sekarang dengan path gambar
     filepath = path.join(__dirname,"../..",filepath)
+
     // Menghapus gambar dari direktori
     fs.unlink(filepath, err => console.log(err))
 }
