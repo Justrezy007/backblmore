@@ -2,6 +2,8 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const multer = require('multer')
+const path = require('path')
+ 
 const app = express()
 const router = express.Router()
 
@@ -30,6 +32,9 @@ const fileFilter = (req,file,cb)=>{
 // Menggunakan middleware Body Parser
 
 app.use(bodyParser.json())
+
+// Url Static untuk file image
+app.use('/image',express.static(path.join(__dirname,'image')))
 
 // Menggunakan middleware
 
